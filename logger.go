@@ -8,15 +8,15 @@ import (
 	slogcommon "github.com/samber/slog-common"
 )
 
-// GoFrameHandler
-type GoFrameHandler struct {
+// GoFrameLogHandler
+type GoFrameLogHandler struct {
 	Option
 	attrs  []slog.Attr
 	groups []string
 }
 
-// NewGoFrameHandler
-func NewGoFrameHandler(logger *glog.Logger, level slog.Leveler, opts ...OptionFunc) slog.Handler {
+// NewGoFrameLogHandler
+func NewGoFrameLogHandler(logger *glog.Logger, level slog.Leveler, opts ...OptionFunc) slog.Handler {
 	if logger == nil {
 		logger = glog.New()
 	}
@@ -31,7 +31,7 @@ func NewGoFrameHandler(logger *glog.Logger, level slog.Leveler, opts ...OptionFu
 
 	SetOption(&option, opts...)
 
-	return &GoFrameHandler{
+	return &GoFrameLogHandler{
 		Option: option,
 		attrs:  []slog.Attr{},
 		groups: []string{},
@@ -39,10 +39,10 @@ func NewGoFrameHandler(logger *glog.Logger, level slog.Leveler, opts ...OptionFu
 
 }
 
-var _ slog.Handler = &GoFrameHandler{}
+var _ slog.Handler = &GoFrameLogHandler{}
 
 // Enabled
-func (h *GoFrameHandler) Enabled(_ context.Context, level slog.Level) bool {
+func (h *GoFrameLogHandler) Enabled(_ context.Context, level slog.Level) bool {
 	if h.Level == nil {
 		h.Level = &slog.LevelVar{} // Info level by default.
 	}
@@ -50,7 +50,7 @@ func (h *GoFrameHandler) Enabled(_ context.Context, level slog.Level) bool {
 }
 
 // Handle
-func (h *GoFrameHandler) Handle(ctx context.Context, record slog.Record) error {
+func (h *GoFrameLogHandler) Handle(ctx context.Context, record slog.Record) error {
 	converter := DefaultConverter
 	if h.Option.Converter != nil {
 		converter = h.Option.Converter
@@ -63,8 +63,8 @@ func (h *GoFrameHandler) Handle(ctx context.Context, record slog.Record) error {
 }
 
 // WithAttrs
-func (h *GoFrameHandler) WithAttrs(slogAttrs []slog.Attr) slog.Handler {
-	return &GoFrameHandler{
+func (h *GoFrameLogHandler) WithAttrs(slogAttrs []slog.Attr) slog.Handler {
+	return &GoFrameLogHandler{
 		Option: h.Option,
 		attrs:  slogcommon.AppendAttrsToGroup(h.groups, h.attrs, slogAttrs...),
 		groups: h.groups,
@@ -72,13 +72,13 @@ func (h *GoFrameHandler) WithAttrs(slogAttrs []slog.Attr) slog.Handler {
 }
 
 // WithGroup
-func (h *GoFrameHandler) WithGroup(name string) slog.Handler {
+func (h *GoFrameLogHandler) WithGroup(name string) slog.Handler {
 	// https://cs.opensource.google/go/x/exp/+/46b07846:slog/handler.go;l=247
 	if name == "" {
 		return h
 	}
 
-	return &GoFrameHandler{
+	return &GoFrameLogHandler{
 		Option: h.Option,
 		attrs:  h.attrs,
 		groups: append(h.groups, name),

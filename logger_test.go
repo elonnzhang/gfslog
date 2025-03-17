@@ -12,7 +12,7 @@ import (
 
 func TestLogger(t *testing.T) {
 	ctx := gctx.New()
-	logger := slog.New(NewGoFrameHandler(glog.New(), slog.LevelDebug))
+	logger := slog.New(NewGoFrameLogHandler(glog.New(), slog.LevelDebug))
 	logger.Info("xxx")
 	logger.LogAttrs(ctx, slog.LevelDebug, "xxxx", slog.Any("REQ", "req"))
 
