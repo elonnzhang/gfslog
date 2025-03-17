@@ -25,23 +25,19 @@ type Option struct {
 	ReplaceAttr func(groups []string, a slog.Attr) slog.Attr
 }
 
-// OptionFunc 是选项函数的类型，用于修改 Option 结构体
+// OptionFunc
 type OptionFunc func(*Option)
 
-// NewOption 使用默认值初始化 Option，并应用所有选项函数
+// NewOption New with Option
 func NewOption(opts ...OptionFunc) *Option {
 	o := &Option{
-		Level:  slog.LevelDebug, // 默认日志级别为 Debug
-		Logger: glog.New(),      // 默认日志记录器
-		// 其他默认值（如 Converter、AttrFromContext 等可留空或设置默认值）
+		Level:  slog.LevelDebug, // default level Debug
+		Logger: glog.New(),      // default glog
 	}
-	for _, opt := range opts {
-		opt(o)
-	}
-	return o
+	return SetOption(o, opts...)
 }
 
-// SetOption 设置选项
+// SetOption set option
 func SetOption(o *Option, opts ...OptionFunc) *Option {
 	for _, opt := range opts {
 		opt(o)
@@ -49,42 +45,42 @@ func SetOption(o *Option, opts ...OptionFunc) *Option {
 	return o
 }
 
-// WithLevel 设置日志级别
+// WithLevel set level
 func WithLevel(level slog.Level) OptionFunc {
 	return func(o *Option) {
 		o.Level = level
 	}
 }
 
-// WithLogger 设置自定义日志记录器
+// WithLogger set logger
 func WithLogger(logger *glog.Logger) OptionFunc {
 	return func(o *Option) {
 		o.Logger = logger
 	}
 }
 
-// WithConverter 设置自定义的 JSON 转换器
+// WithConverter set converter
 func WithConverter(converter Converter) OptionFunc {
 	return func(o *Option) {
 		o.Converter = converter
 	}
 }
 
-// WithAttrFromContext 添加从 Context 中提取属性的函数
+// WithAttrFromContext set Context attr
 func WithAttrFromContext(f func(context.Context) []slog.Attr) OptionFunc {
 	return func(o *Option) {
 		o.AttrFromContext = append(o.AttrFromContext, f)
 	}
 }
 
-// WithAddSource 配置 slog.Handler 的 AddSource
+// WithAddSource set add source
 func WithAddSource(addSource bool) OptionFunc {
 	return func(o *Option) {
 		o.AddSource = addSource
 	}
 }
 
-// WithReplaceAttr 配置 slog.Handler 的 ReplaceAttr
+// WithReplaceAttr set slog.Handler ReplaceAttr
 func WithReplaceAttr(replaceAttr func(groups []string, a slog.Attr) slog.Attr) OptionFunc {
 	return func(o *Option) {
 		o.ReplaceAttr = replaceAttr

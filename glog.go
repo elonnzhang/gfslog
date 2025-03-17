@@ -10,6 +10,8 @@ import (
 func goframeLevelFunc(lvl slog.Level) int {
 	var glevel int
 	switch lvl {
+	case slog.LevelDebug:
+		glevel = glog.LEVEL_DEBU
 	case slog.LevelInfo:
 		glevel = glog.LEVEL_INFO
 	case slog.LevelWarn:
